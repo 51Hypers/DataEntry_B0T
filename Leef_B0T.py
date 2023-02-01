@@ -92,8 +92,8 @@ def main():
 
     # Delete PDF because all of them are saved with the same name ease of functionability
         try:
-            os.remove(os.path.join(rf'{os.getcwd()}\ReadPDFStream.pdf"))
-            os.remove(os.path.join(rf'{os.getcwd()}\page.jpg"))
+            os.remove(os.path.join(rf'{os.getcwd()}\ReadPDFStream.pdf'))
+            os.remove(os.path.join(rf'{os.getcwd()}\page.jpg'))
         except:
             pass
     
@@ -122,7 +122,7 @@ def main():
         images[0].save("page.jpg", "JPEG")
 
     # Scraping the image using OCR AI B0T
-        IMAGE_PATH = r"C:\Data_Entry_Bot\eZ\page.jpg"
+        IMAGE_PATH = rf"{os.getcwd()}\page.jpg"
         reader = easyocr.Reader(['en'])
         result = reader.readtext(IMAGE_PATH,paragraph="False")
         values = []
@@ -264,20 +264,21 @@ def main():
                 param_id = final_ids_dict[i]
                 param_value = final_values_dict[i]
                 total_area_drop_down = browser.find_element(By.ID, param_id)
-                    if(param_value <= 250):
-                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[1]").get_attribute("innerHTML"))
-                    elif(param_value > 250 & param_value <= 500):
-                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[2]").get_attribute("innerHTML"))
-                    elif(param_value > 500 & param_value <= 750):
-                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[3]").get_attribute("innerHTML"))
-                    elif(param_value > 750 & param_value <= 1000):
-                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[4]").get_attribute("innerHTML"))
-                    elif(param_value > 1000 & param_value <= 1500):
-                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[5]").get_attribute("innerHTML"))
-                    elif(param_value > 1500 & param_value <= 2000):
-                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[6]").get_attribute("innerHTML"))
-                    elif(param_value > 2000):
-                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[7]").get_attribute("innerHTML"))
+                if(param_value <= 250):
+                    total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[1]").get_attribute("innerHTML"))
+                elif(param_value > 250 & param_value <= 500):
+                    total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[2]").get_attribute("innerHTML"))
+                elif(param_value > 500 & param_value <= 750):
+                    total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[3]").get_attribute("innerHTML"))
+                elif(param_value > 750 & param_value <= 1000):
+                    total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[4]").get_attribute("innerHTML"))
+                elif(param_value > 1000 & param_value <= 1500):
+                    total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[5]").get_attribute("innerHTML"))
+                elif(param_value > 1500 & param_value <= 2000):
+                    total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[6]").get_attribute("innerHTML"))
+                elif(param_value > 2000):
+                    total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[7]").get_attribute("innerHTML"))
+        pdb.set_trace()
         submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
         browser.execute_script("arguments[0].click()", submit_button)
 
@@ -287,7 +288,6 @@ def main():
 
 
 main()
-
 
 
 
