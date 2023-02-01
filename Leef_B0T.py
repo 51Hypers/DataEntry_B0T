@@ -80,8 +80,8 @@ def main():
 
     # Delete PDF because all of them are saved with the same name ease of functionability
         try:
-            os.remove(os.path.join(r"C:\Data_Entry_Bot\eZ\ReadPDFStream.pdf"))
-            os.remove(os.path.join(r"C:\Data_Entry_Bot\eZ\page.jpg"))
+            os.remove(os.path.join(rf'{os.getcwd()}\ReadPDFStream.pdf"))
+            os.remove(os.path.join(rf'{os.getcwd()}\page.jpg"))
         except:
             pass
     
@@ -106,7 +106,7 @@ def main():
         copy_final_labellist = final_labellist.copy()
     
     # Converting PDF to Imagine using easyOCR
-        images = convert_from_path(r"C:\Data_Entry_Bot\eZ\ReadPDFStream.pdf")
+        images = convert_from_path(rf'{os.getcwd()}\ReadPDFStream.pdf")
         images[0].save("page.jpg", "JPEG")
 
     # Scraping the image using OCR AI B0T
