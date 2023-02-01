@@ -5,6 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.alert import Alert
 import pdb
 from pdf2image import convert_from_path
 import os
@@ -72,6 +73,8 @@ def main():
         attendance_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div[1]/div/div[1]/input")
         browser.execute_script("arguments[0].click();", attendance_button)
         my_projects_button = browser.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
+        alert = Alert(browser)
+        alert.accept()
         browser.execute_script("arguments[0].click();", my_projects_button)
         n = browser.find_element(By.XPATH,"/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[4]/span").get_attribute("innerHTML")
         browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[8]/a[1]").click()
