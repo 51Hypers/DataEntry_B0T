@@ -67,7 +67,7 @@ def main():
         
         # Click the MyProjects button as it is embedded in the side bar
         browser.execute_script("arguments[0].click();", my_projects_button)
-        n = browser.find_element(By.XPATH,"/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[4]/span").get_attribute("innerHTML")
+        # n = browser.find_element(By.XPATH,"/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[4]/span").get_attribute("innerHTML")
         browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[8]/a[1]").click()
     except:
         attendance_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div[1]/div/div[1]/input")
@@ -76,7 +76,7 @@ def main():
         alert = Alert(browser)
         alert.accept()
         browser.execute_script("arguments[0].click();", my_projects_button)
-        n = browser.find_element(By.XPATH,"/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[4]/span").get_attribute("innerHTML")
+        # n = browser.find_element(By.XPATH,"/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[4]/span").get_attribute("innerHTML")
         browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[8]/a[1]").click()
 
     # Loop created to iterate through the number of files remaining
