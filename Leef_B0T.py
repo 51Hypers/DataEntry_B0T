@@ -106,7 +106,7 @@ def main():
         copy_final_labellist = final_labellist.copy()
     
     # Converting PDF to Imagine using easyOCR
-        images = convert_from_path(rf'{os.getcwd()}\ReadPDFStream.pdf")
+        images = convert_from_path(rf"{os.getcwd()}\ReadPDFStream.pdf")
         images[0].save("page.jpg", "JPEG")
 
     # Scraping the image using OCR AI B0T
