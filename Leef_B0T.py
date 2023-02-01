@@ -256,30 +256,28 @@ def main():
     #--------------------------------------------------Entering the Payload--------------------------------------------------#
 
         for i in final_labellist:
-            try:
+            param_id = final_ids_dict[i]
+            param_value = final_values_dict[i]
+            browser.find_element(By.ID, param_id).send_keys(param_value)
+    # This exception creater for the total area as the drop down is in the form of options according to given divisions
+            if(i in "Total Area (Sq.Ft.)"):
                 param_id = final_ids_dict[i]
                 param_value = final_values_dict[i]
-                browser.find_element(By.ID, param_id).send_keys(param_value)
-            except:
-
-    # This exception creater for the total area as the drop down is in the form of options according to given divisions
-                if(i in "Total Area (Sq.Ft.)"):
-                    param_id = final_ids_dict[i]
-                    param_value = final_values_dict[i]
+                total_area_drop_down = browser.find_element(By.ID, param_id)
                     if(param_value <= 250):
-                        browser.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[1]").get_attribute("innerHTML"))
+                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[1]").get_attribute("innerHTML"))
                     elif(param_value > 250 & param_value <= 500):
-                        browser.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[2]").get_attribute("innerHTML"))
+                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[2]").get_attribute("innerHTML"))
                     elif(param_value > 500 & param_value <= 750):
-                        browser.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[3]").get_attribute("innerHTML"))
+                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[3]").get_attribute("innerHTML"))
                     elif(param_value > 750 & param_value <= 1000):
-                        browser.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[4]").get_attribute("innerHTML"))
+                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[4]").get_attribute("innerHTML"))
                     elif(param_value > 1000 & param_value <= 1500):
-                        browser.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[5]").get_attribute("innerHTML"))
+                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[5]").get_attribute("innerHTML"))
                     elif(param_value > 1500 & param_value <= 2000):
-                        browser.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[6]").get_attribute("innerHTML"))
+                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[6]").get_attribute("innerHTML"))
                     elif(param_value > 2000):
-                        browser.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[7]").get_attribute("innerHTML"))
+                        total_area_drop_down.send_keys(browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[38]/div/select/option[7]").get_attribute("innerHTML"))
         submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
         browser.execute_script("arguments[0].click()", submit_button)
 
