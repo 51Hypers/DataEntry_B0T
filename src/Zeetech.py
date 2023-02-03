@@ -4,8 +4,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from src.consts import *
+from src.Consts import *
 from webdriver_manager.chrome import ChromeDriverManager
+from src.Project import *
 
 
 class Zeetech:
@@ -15,8 +16,7 @@ class Zeetech:
         self.driver.get(URL)
         self.driver.implicitly_wait(5)
 
-        self.currentpage = ""
-
+        self._currentpage = "Login"
 
     def _get_driver(self):
         chrome_options = Options()
@@ -29,6 +29,10 @@ class Zeetech:
         )
 
         return driver
+
+    def navigate(self,page: str):
+        pass
+        #self.driver.get()
 
     def login(self, loginid: str, loginpwd: str):
         # Login ID
@@ -45,11 +49,34 @@ class Zeetech:
         self.driver.find_element(By.ID, "btn_log").click()
 
         print("Logged in")
+        self._currentpage = "DailyAttendance"
 
     def start_project(self):
         # Click MyProjects Button
         (
-
+            self.driver
+            .execute_script(
+                "arguments[0].click();",
+                self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
+            )
         )
+        self._currentpage = "MyProject"
+
+        filecount = int(self.driver.find_element(
+            By.XPATH, "//div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[4]/span"
+        ).get_attribute("innerHTML"))
+
+        self.driver.find_element(
+            By.XPATH, "//div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[8]/a[1]"
+        ).click()
+
+        p = Project(self.driver, filecount)
+
+
+
+
+
+
+
 
 

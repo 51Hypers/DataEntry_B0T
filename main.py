@@ -1,4 +1,4 @@
-from src.consts import LOGIN_ID,LOGIN_PWD,URL
+from src.Consts import LOGIN_ID,LOGIN_PWD,URL
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
