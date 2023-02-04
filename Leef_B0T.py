@@ -25,6 +25,12 @@ URL = "https://jobs.zeetechmanagement.com/Candidate/MyProject.aspx"
 LOGINID = "8861375355"
 LOGINPWD = "wasdrqe156!%^f"
 
+
+def strip_dict(d):
+    return dict((k.strip(), v.strip()) for k, v in d.items())
+
+
+
 def main():
     #--------------------------------------------------Inputing the detials to the website--------------------------------------------------#
 
@@ -128,7 +134,7 @@ def main():
     # Scraping the image using OCR AI B0T
         IMAGE_PATH = rf"{os.getcwd()}\page.jpg"
         reader = easyocr.Reader(['en'])
-        result = reader.readtext(IMAGE_PATH,paragraph="False")
+        result = reader.readtext(IMAGE_PATH,paragraph="True")
         values = []
         for i in result:
             values.append(i[1])
@@ -254,7 +260,18 @@ def main():
                         final_values_dict.update({final_labellist[truncated_final_labellist.index(i)] : values[truncated_values.index(var[0]) + 1]})
                     except:
                         continue 
-
+        # final_values_dict = strip_dict(final_values_dict)
+        for i in final_values_dict.keys():
+            d=final_values_dict.get(i)
+            if i == " Date of Establishment" and len(d)>10:
+                d=d[:-1]
+                final_values_dict.update({i:d})
+            elif i == 'License No.' and len(d)>17:
+                d=d[:-1]
+                final_values_dict.update({i:d})
+            elif i == 'Mobile No.' and len(d)>10:
+                d=d[:-1] 
+                final_values_dict.update({i:d})
     #--------------------------------------------------LEEF--------------------------------------------------#
 
     #--------------------------------------------------Entering the Payload--------------------------------------------------#
@@ -342,7 +359,7 @@ def main():
             final_values_dict = {'Application Type': 'New Licence', 'License No.': 'RAN22020119159408', 'Firm Type': 'Proprietary',
             'Type of Ownership of Business Premises': 'On Rent', 'Applicant Name': 'FAULTY PDF', "Father's Name": 'RAM',
             'Mobile No.': '9576131033', 'Applicant Address': 'ADRESSS', 'Name of Business': 'BUISNESS',
-            ' Nature of Business/Brief Description of Business': 'SHOP', ' Date of Establishment': '05-01-20191',
+            ' Nature of Business/Brief Description of Business': 'SHOP', ' Date of Establishment': '05-01-2019',
             ' Business Address': 'INDIA', ' Total Area (Sq.Ft.)': '300'}
             for i in final_labellist:
                 param_id = final_ids_dict[i]
