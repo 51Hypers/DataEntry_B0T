@@ -7,6 +7,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import UnexpectedAlertPresentException, NoSuchElementException
 import pdb
 from pdf2image import convert_from_path
 import os
@@ -260,7 +262,8 @@ def main():
                         final_values_dict.update({final_labellist[truncated_final_labellist.index(i)] : values[truncated_values.index(var[0]) + 1]})
                     except:
                         continue 
-        # final_values_dict = strip_dict(final_values_dict)
+
+    # This is loop to touble shoot the random 1 appearing at the end of the OCR reading
         for i in final_values_dict.keys():
             d=final_values_dict.get(i)
             if i == " Date of Establishment" and len(d)>10:
@@ -272,6 +275,35 @@ def main():
             elif i == 'Mobile No.' and len(d)>10:
                 d=d[:-1] 
                 final_values_dict.update({i:d})
+        
+    # This loop is to check for the 1 appearing in Names
+        for i in final_labellist:
+            param_value_check = final_values_dict[i]
+            if(i.strip() == "Applicant Name"):
+                stripped_applicant_name = i[-1::]
+                if(stripped_applicant_name.isnumeric()):
+                    final_values_dict.update({i : param_value_check.replace(stripped_applicant_name, "")})
+
+            if(i.strip() == "Buisness Name"):
+                stripped_applicant_name = i[-1::]
+                if(stripped_applicant_name.isnumeric()):
+                    final_values_dict.update({i : param_value_check.replace(stripped_applicant_name, "")}) 
+
+            if(i.strip() == "Applicant Address"):
+                stripped_applicant_name = i[-1::]
+                if(stripped_applicant_name.isnumeric()):
+                    final_values_dict.update({i : param_value_check.replace(stripped_applicant_name, "")}) 
+
+            if(i.strip() == "Buisness Address"):
+                stripped_applicant_name = i[-1::]
+                if(stripped_applicant_name.isnumeric()):
+                    final_values_dict.update({i : param_value_check.replace(stripped_applicant_name, "")}) 
+
+    # This is to change the '-' in the date element to '/' as it is the format in which it is accepted in the payload
+        for i in final_labellist:
+            if(i.strip() == "Date of Establishment"):
+                final_values_dict.update({i : final_values_dict[i].replace('-', '/')})
+
     #--------------------------------------------------LEEF--------------------------------------------------#
 
     #--------------------------------------------------Entering the Payload--------------------------------------------------#
@@ -343,19 +375,28 @@ def main():
                 elif("own" in param_value):
                     drop_down.select_by_index(2)
 
+    # This loop is there to remove all the previous data that is there in the data txt area so that it can be re-entered as payload
+            if(i.strip() == "Date of Establishment"):
+                for i in range(20):
+                    date_button = browser.find_element(By.ID, param_id)
+                    date_button.send_keys(Keys.BACKSPACE)
+                date_button.send_keys(param_id, param_value)
+
         pdb.set_trace()
     
-    # Try and except block to take care of FAULTY PDFs & FAULTY PARAMS
+    #--------------------------------------------------LEEF--------------------------------------------------#
+
+    #--------------------------------------------------Exception Handling--------------------------------------------------#
+    
+        submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
+
+        # This TRY BLOCK is for the first deafult try to check whether the inputed payload can be entered into the HTML form
         try:
-            submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
             browser.execute_script("arguments[0].click()", submit_button)
     
-    # This except block is replicating the payload inputing function with default values for faulty pdfs
-        except:
-            submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
-            browser.execute_script("arguments[0].click()", submit_button)
-            alert_while_submitting = Alert(browser)
-            alert_while_submitting.accept()
+    # FIRST EXCEPTION --> giving value error with name as an "attribute"
+    # This EXCEPT is replicating the payload inputing function with default values for FAULTY PDFs
+        except ValueError:
             final_values_dict = {'Application Type': 'New Licence', 'License No.': 'RAN22020119159408', 'Firm Type': 'Proprietary',
             'Type of Ownership of Business Premises': 'On Rent', 'Applicant Name': 'FAULTY PDF', "Father's Name": 'RAM',
             'Mobile No.': '9576131033', 'Applicant Address': 'ADRESSS', 'Name of Business': 'BUISNESS',
@@ -427,8 +468,89 @@ def main():
                         drop_down.select_by_index(1)
                     elif("own" in param_value):
                         drop_down.select_by_index(2)
-                submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
-                browser.execute_script("arguments[0].click()", submit_button)
+
+    # Pressing the submit button after the exception handling
+            browser.execute_script("arguments[0].click();", submit_button)
+
+    # SECOND EXCEPTION --> where the mobile number is usualy in "alnum" form where it must be in "numeric"
+    # This EXCECPT BLOCK is created to deal when an element is out of its DATA TYPE and an alert box pops up
+        except UnexpectedAlertPresentException:
+            browser.switch_to().alert().accept()
+            
+            final_values_dict = {'Application Type': 'New Licence', 'License No.': 'RAN22020119159408', 'Firm Type': 'Proprietary',
+            'Type of Ownership of Business Premises': 'On Rent', 'Applicant Name': 'FAULTY PDF', "Father's Name": 'RAM',
+            'Mobile No.': '9576131033', 'Applicant Address': 'ADRESSS', 'Name of Business': 'BUISNESS',
+            ' Nature of Business/Brief Description of Business': 'SHOP', ' Date of Establishment': '05-01-2019',
+            ' Business Address': 'INDIA', ' Total Area (Sq.Ft.)': '300'}
+            for i in final_labellist:
+                param_id = final_ids_dict[i]
+                param_value = final_values_dict[i]
+                browser.find_element(By.ID, param_id).send_keys(param_value)
+
+    # This exception creater for the total area as the drop down is in the form of options according to given divisions
+                if(i.strip() in "Total Area (Sq.Ft.)"):
+                    param_id = final_ids_dict[i]
+                    param_value = int(final_values_dict[i])
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if(param_value <= 250):
+                        drop_down.select_by_index(0)
+                    elif(param_value > 250 and param_value <= 500):
+                        drop_down.select_by_index(1)
+                    elif(param_value > 500 and param_value <= 750):
+                        drop_down.select_by_index(2)
+                    elif(param_value > 750 and param_value <= 1000):
+                        drop_down.select_by_index(3)
+                    elif(param_value > 1000 and param_value <= 1500):
+                        drop_down.select_by_index(4)
+                    elif(param_value > 1500 and param_value <= 2000):
+                        drop_down.select_by_index(5)
+                    elif(param_value > 2000):
+                        drop_down.select_by_index(6)
+                
+    # This loop is for APPLICATION TYPE having a select tag in the framework
+                if(i.strip() == "Application Type"):
+                    param_id = final_ids_dict[i]
+                    param_value = final_values_dict[i].casefold()
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if("license" in param_value):
+                        drop_down.select_by_index(0)
+                    elif("renew" in param_value):
+                        drop_down.select_by_index(1)
+        
+    # This loop is for the FIRM TYPE having a select tag in the framework
+                if(i.strip() == "Firm Type"):
+                    param_id = final_ids_dict[i]
+                    param_value = final_values_dict[i].casefold()
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if("proprie" in param_value):
+                        drop_down.select_by_index(0)
+                    elif("partner" in param_value):
+                        drop_down.select_by_index(1)
+                    elif("ngo" in param_value):
+                        drop_down.select_by_index(2)
+                    elif("opc" in param_value):
+                        drop_down.select_by_index(3)
+                    elif("private" in param_value):
+                        drop_down.select_by_index(4)
+                    elif("public" in param_value):
+                        drop_down.select_by_index(5)
+                    else:
+                        drop_down.select_by_index(6)
+
+    # This loop is for the TYPE OF OWNERSHIP select tag
+                if(i.strip() == "Type of Ownership of Business Premises"):
+                    param_id = final_ids_dict[i]
+                    param_value = final_values_dict[i].casefold()
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if("rent" in param_value):
+                        drop_down.select_by_index(0)
+                    elif("lease" in param_value):
+                        drop_down.select_by_index(1)
+                    elif("own" in param_value):
+                        drop_down.select_by_index(2)
+
+    # Submitting the payload after the EXCEPTION has been handled
+        browser.execute_script("arguments[0].click()", submit_button)
 
     #--------------------------------------------------LEEF--------------------------------------------------#   
         
