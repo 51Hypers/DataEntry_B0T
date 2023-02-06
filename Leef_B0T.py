@@ -24,8 +24,8 @@ from itertools import tee, count
 import tempfile
 
 URL = "https://jobs.zeetechmanagement.com/Candidate/MyProject.aspx"
-LOGINID = "8861375355"
-LOGINPWD = "wasdrqe156!%^f"
+LOGINID = input("Enter the Login ID:")
+LOGINPWD = input("Enter the Password:")
 
 def strip_dict(d):
     return dict((k.strip(), v.strip()) for k, v in d.items())
