@@ -27,11 +27,13 @@ URL = "https://jobs.zeetechmanagement.com/Candidate/MyProject.aspx"
 LOGINID = "8861375355"
 LOGINPWD = "wasdrqe156!%^f"
 
+
 def strip_dict(d):
     return dict((k.strip(), v.strip()) for k, v in d.items())
 
+
+
 def main():
-    
     #--------------------------------------------------Inputing the detials to the website--------------------------------------------------#
 
     chrome_options = Options()
@@ -260,6 +262,22 @@ def main():
                         final_values_dict.update({final_labellist[truncated_final_labellist.index(i)] : values[truncated_values.index(var[0]) + 1]})
                     except:
                         continue 
+    
+    #--------------------------------------------------LEEF--------------------------------------------------#
+
+    #--------------------------------------------------Correcting the Values to be entered as PAYLOAD--------------------------------------------------#
+
+    # This is to remove the "Email Id" and the "Street Name" from the outputed OCR values
+        for i in final_values_dict.keys():
+            d=final_values_dict.get(i)
+            if i == "Applicant Address":
+                if "street name" in d.casefold():
+                    d=d[0:d.casefold().index("street name")]
+                    final_values_dict.update({i:d})
+            elif i == "Applicant Address":
+                if "email id" in d.casefold():
+                    d=d[0:d.casefold().index("email id")]
+                    final_values_dict.update({i:d})
 
     # This is loop to touble shoot the random 1 appearing at the end of the OCR reading
         for i in final_values_dict.keys():
@@ -273,7 +291,7 @@ def main():
             elif i == 'Mobile No.' and len(d)>10:
                 d=d[:-1] 
                 final_values_dict.update({i:d})
-        
+
     # This loop is to check for the 1 appearing in Names
         for i in final_labellist:
             param_value_check = final_values_dict[i]
