@@ -27,13 +27,11 @@ URL = "https://jobs.zeetechmanagement.com/Candidate/MyProject.aspx"
 LOGINID = "8861375355"
 LOGINPWD = "wasdrqe156!%^f"
 
-
 def strip_dict(d):
     return dict((k.strip(), v.strip()) for k, v in d.items())
 
-
-
 def main():
+    
     #--------------------------------------------------Inputing the detials to the website--------------------------------------------------#
 
     chrome_options = Options()
