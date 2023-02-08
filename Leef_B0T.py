@@ -244,6 +244,12 @@ def main():
             values = list(map(lambda x: x.replace('Address1', 'Business Address'),values))
 
     # Block to change the first instance of Name to Applicant name as Father and Buisness name is defined properly but not Applicant name
+        print(values)
+        for i in values:
+            x=values.index(i)
+            if i[-1]=="1" and i not in [' Date of Establishment','License No.','Mobile No.']:
+                values[x]=i[:-1]
+
         n = values.index("Name")
         values[n] = "Applicant Name"
 
