@@ -219,6 +219,10 @@ def main():
 
     #--------------------------------------------------LABELS & VALUES--------------------------------------------------#
     
+        set_val=set(values)
+        if len(values)-len(set_val)>1:
+            print("error")
+        
     # Function to make the addresses unique as the applicant and the buisness address just appear address
         def uniquify(seq, suffs = count(1)):
             not_unique = [k for k,v in Counter(seq).items() if v>1] 
@@ -244,11 +248,11 @@ def main():
             values = list(map(lambda x: x.replace('Address1', 'Business Address'),values))
 
     # Block to change the first instance of Name to Applicant name as Father and Buisness name is defined properly but not Applicant name
-        print(values)
-        for i in values:
-            x=values.index(i)
-            if i[-1]=="1" and i not in [' Date of Establishment','License No.','Mobile No.']:
-                values[x]=i[:-1]
+        # print(values)
+        # for i in values:
+        #     x=values.index(i)
+        #     if i[-1]=="1" and i not in [' Date of Establishment','License No.','Mobile No.']:
+        #         values[x]=i[:-1]
 
         n = values.index("Name")
         values[n] = "Applicant Name"
@@ -578,3 +582,6 @@ def main():
 
 
 main()
+
+
+
