@@ -22,10 +22,11 @@ import difflib
 from collections import Counter 
 from itertools import tee, count
 import tempfile
+import getpass
 
 URL = "https://jobs.zeetechmanagement.com/Candidate/MyProject.aspx"
 LOGINID = input("Enter the Login ID:")
-LOGINPWD = input("Enter the Password:")
+LOGINPWD = getpass.getpass("Enter the Password:")
 
 def strip_dict(d):
     return dict((k.strip(), v.strip()) for k, v in d.items())
@@ -570,7 +571,7 @@ def main():
                         drop_down.select_by_index(2)
 
     # Submitting the payload after the EXCEPTION has been handled
-        browser.execute_script("arguments[0].click()", submit_button)
+    # browser.execute_script("arguments[0].click()", submit_button) --> Uncomment only after debugging is over
 
     #--------------------------------------------------LEEF--------------------------------------------------#   
         
