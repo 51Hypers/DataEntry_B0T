@@ -19,6 +19,10 @@ class Zeetech:
 
         self._currentpage = "Login"
 
+    @staticmethod
+    def navigate(self, link : str):
+        pass
+
     def _get_driver(self):
         chrome_options = Options()
         chrome_options.add_experimental_option("prefs", PROFILE)

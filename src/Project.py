@@ -1,4 +1,7 @@
+import difflib
 import os
+import re
+
 import easyocr
 from pdf2image import convert_from_path
 
@@ -55,8 +58,38 @@ class Project:
         res = reader.readtext(self.pagepath, paragraph="False")
         self.pdf_values = [i[1] for i in res]
 
-    def validateParams(self):
+    def generateInitialDict(self):
         for i in self.form_labels:
             for j in self.pdf_values:
-                if (i == j):
-                    2
+                if i == j:
+                    self.mapped_values.update(
+                        {i: self.pdf_values[self.pdf_values.index(i) + 1]}
+                    )
+
+
+    def cleanList(self, oldlist : list):
+        newlist = []
+        for i in oldlist:
+            newlist.append(
+                re.sub("[^A-Z]", "", i , 0, re.IGNORECASE).casefold()
+            )
+
+        return newlist
+
+    def generateFinalDict(self):
+        for element in self.pdf_values:
+            inputvar = difflib.get_close_matches(
+                element, self.cleanList(self.pdf_values), 1, 0.7
+            )
+            selectvar = difflib.get_close_matches(
+                element, self.cleanList(
+
+                ), 1,0.7
+            )
+
+
+
+
+
+
+
