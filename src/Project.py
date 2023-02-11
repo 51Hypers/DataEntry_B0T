@@ -53,7 +53,10 @@ class Project:
 
         reader = easyocr.Reader(['en'])
         res = reader.readtext(self.pagepath, paragraph="False")
-        values = [i[1] for i in res]
+        self.pdf_values = [i[1] for i in res]
 
     def validateParams(self):
-        pass
+        for i in self.form_labels:
+            for j in self.pdf_values:
+                if (i == j):
+                    2

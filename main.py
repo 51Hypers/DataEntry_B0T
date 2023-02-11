@@ -10,6 +10,7 @@ from src.Zeetech import *
 def main():
     z = Zeetech()
     z.login(LOGIN_ID,LOGIN_PWD)
+    z.start_project()
 
 
 if __name__ == '__main__':

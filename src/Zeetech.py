@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
 from src.Consts import *
 from webdriver_manager.chrome import ChromeDriverManager
 from src.Project import *
@@ -72,10 +73,14 @@ class Zeetech:
 
         p = Project(self.driver, filecount)
 
+        #  ! Ignore later
+        view_file_button = self.driver.find_element(
+            By.XPATH, "//div[4]/div[2]/div/div[2]/div/div[2]/div/div/table/tbody/tr[1]/td[2]/a")
 
+        self.driver.execute_script("arguments[0].click();", view_file_button)
 
-
-
+        #
+        
 
 
 
