@@ -33,7 +33,7 @@ def strip_dict(d):
 def main():
     
     #--------------------------------------------------Inputing the detials to the website--------------------------------------------------#
-
+    
     chrome_options = Options()
 
     # Disabling Chrome's PDF Viewer inorder to trigger the auto-download of the PDF 
@@ -95,8 +95,14 @@ def main():
     #     browser.find_element(By.ID, I_D).click()
     #     browser.find_element(By.XPATH, "//table/tbody/tr[1]/td[3]/a").click()
     for i in range(20):
-        view_file_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div[2]/div/div/table/tbody/tr[1]/td[2]/a")
-        browser.execute_script("arguments[0].click();", view_file_button)
+        try:
+            view_file_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div[2]/div/div/table/tbody/tr[1]/td[2]/a")
+            browser.execute_script("arguments[0].click();", view_file_button)
+        except:
+            get_data_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div[1]/div[3]/div/table/tbody/tr[4]/td[2]/input")
+            browser.execute_script("arguments[0].click();", get_data_button)
+            view_file_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div[2]/div/div/table/tbody/tr[1]/td[2]/a")
+            browser.execute_script("arguments[0].click();", view_file_button)
 
     # Delete PDF because all of them are saved with the same name ease of functionability
         try:
@@ -296,7 +302,7 @@ def main():
             submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
             browser.execute_script("arguments[0].click();", submit_button)
             main()
-            
+
     # If no error then it must continue
         else:
             continue
@@ -374,8 +380,12 @@ def main():
             elif i == 'License No.' and len(d)>17:
                 d=d[:-1]
                 final_values_dict.update({i:d})
-            elif i == 'Mobile No.' and len(d)>10:
-                d=d[:-1] 
+            elif i == 'Mobile No.': 
+                d=re.sub("[^0-9]", "",d)
+                if len(d)>10:
+                    d=d[:-1] 
+                if len(d)<10:
+                    d="1234567890"
                 final_values_dict.update({i:d})
 
     # This loop is to check for the 1 appearing in Names
