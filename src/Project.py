@@ -65,6 +65,7 @@ class Project:
         self.realizeFile()
         self.submitFile()
         self.cycle_filecount +=1
+        print(f"Cycle Files done : {self.cycle_filecount}")
 
     def loopCycle(self):
         try:
@@ -75,15 +76,17 @@ class Project:
                 self.cycles +=1
                 self.cycle_filecount = 0
                 self.state = False
+            print(f"Cycles : {self.cycles}")
         except:
             self.regenerateData()
 
     def regenerateData(self):
         if not self.state:
+            print("Regenerating Data")
             b = self.driver.find_element(
                 By.XPATH, '//*[@id="btn_get_data"]'
             )
-            self.driver.execute_script("arguments[0].click();",b)
+            self.driver.execute_script("arguments[0].click();", b)
 
         self.state = True
         self.loopCycle()
