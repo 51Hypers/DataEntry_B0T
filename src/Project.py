@@ -72,6 +72,7 @@ class Project:
             while self.state:
                 for _ in range(20):
                     self.executeCycle()
+                    time.sleep(10)
 
                 self.cycles +=1
                 self.cycle_filecount = 0

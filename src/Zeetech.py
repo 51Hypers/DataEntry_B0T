@@ -2,6 +2,7 @@
 import time
 
 from selenium import webdriver
+from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -45,15 +46,33 @@ class Zeetech:
 
     def start_project(self):
         # * Click MyProjects Button
-        (
-            self.driver
-            .execute_script(
-                "arguments[0].click();",
-                self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
+        try:
+            (
+                self.driver
+                .execute_script(
+                    "arguments[0].click();",
+                    self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
+                )
             )
-        )
-        self._currentpage = "MyProject"
+            self._currentpage = "MyProject"
+        except:
+            attendance_button = self.driver.find_element(
+                By.XPATH,
+                "/html/body/form/div[4]/div[2]/div/div[2]/div/div[1]/div/div[1]/input"
+            )
+            self.driver.execute_script("arguments[0].click();", attendance_button)
+            alert = Alert(self.driver)
+            alert.accept()
+            (
+                self.driver
+                .execute_script(
+                    "arguments[0].click();",
+                    self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
+                )
+            )
+            self._currentpage = "MyProject"
 
+    def startProject(self):
         filecount = int(self.driver.find_element(
             By.XPATH, "//div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[4]/span"
         ).get_attribute("innerHTML"))
