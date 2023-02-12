@@ -15,6 +15,12 @@ PROFILE = {
     "plugins.always_open_pdf_externally": True,
 }
 
+FORMINPUTS = [
+    'input',
+    'select',
+    'textarea'
+]
+
 ROUTER = {
     "Login" : "",
     "MyProject" : "",

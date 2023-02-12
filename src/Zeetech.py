@@ -8,36 +8,21 @@ from selenium.webdriver.common.keys import Keys
 from src.Consts import *
 from webdriver_manager.chrome import ChromeDriverManager
 from src.Project import *
+from src.Utils import *
 
 
 class Zeetech:
     def __init__(self):
         print("Init started")
-        self.driver = self._get_driver()
+        self.driver = Utils.get_driver()
         self.driver.get(URL)
         self.driver.implicitly_wait(5)
 
         self._currentpage = "Login"
 
-    @staticmethod
-    def navigate(self, link : str):
+    def navigate(self, page: str):
         pass
-
-    def _get_driver(self):
-        chrome_options = Options()
-        chrome_options.add_experimental_option("prefs", PROFILE)
-        chrome_options.add_experimental_option("detach", True)
-
-        driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()),
-            options=chrome_options
-        )
-
-        return driver
-
-    def navigate(self,page: str):
-        pass
-        #self.driver.get()
+        # self.driver.get()
 
     def login(self, loginid: str, loginpwd: str):
         # Login ID
@@ -84,8 +69,3 @@ class Zeetech:
         self.driver.execute_script("arguments[0].click();", view_file_button)
 
         #
-        
-
-
-
-
