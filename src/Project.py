@@ -1,28 +1,92 @@
-import difflib
 import os
 import re
 
-import easyocr
-from pdf2image import convert_from_path
-
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from src.Consts import *
 from webdriver_manager.chrome import ChromeDriverManager
 
-'''
-Project -> 
-'''
+from src.Consts import *
+from src.Form import *
+
 
 class Project:
     def __init__(self,driver: webdriver.Chrome, filecount: int):
         self.driver = driver
-        self.filecount = filecount
+        self.total_filecount = filecount
+        self.files_completed = 0
+        self.cycles = 0
+        self.cycle_filecount = 0
+        self.state = True
 
-    # ? What should the Project class be handling?
+    def openFile(self):
+        viewfile = self.driver.find_element(
+            By.XPATH, "//*[@id='div_data_file']/tr[1]/td[2]/a"
+        )
+
+        self.driver.execute_script("arguments[0].click();", viewfile)
+
+    def realizeFile(self):
+        p = Form(self.driver)
+
+        print("Creating A Form")
+
+        p.getPdf()
+        print("Got PDF")
+
+        time.sleep(3)
+
+        print("Reading PDF")
+        p.readPDF()
+        print("Finished Reading PDF")
+
+        print("generating IDs")
+        p.generateIDDict()
+
+        print("generatign payload")
+        p.generatePayload()
+
+        print("\n")
+        print(p.mapped_payload)
+
+        print("Entering Payload")
+        p.enterPayload()
+
+    def submitFile(self):
+        subm = self.driver.find_element(By.XPATH, '//*[@id="btn_save_bottom"]')
+        self.driver.execute_script("arguments[0].click();", subm)
+        self.files_completed += 1
+
+    def executeCycle(self):
+        self.openFile()
+        self.realizeFile()
+        self.submitFile()
+        self.cycle_filecount +=1
+
+    def loopCycle(self):
+        try:
+            while self.state:
+                for _ in range(20):
+                    self.executeCycle()
+
+                self.cycles +=1
+                self.cycle_filecount = 0
+                self.state = False
+        except:
+            self.regenerateData()
+
+    def regenerateData(self):
+        if not self.state:
+            b = self.driver.find_element(
+                By.XPATH, '//*[@id="btn_get_data"]'
+            )
+            self.driver.execute_script("arguments[0].click();",b)
+
+        self.state = True
+        self.loopCycle()
 
 
 

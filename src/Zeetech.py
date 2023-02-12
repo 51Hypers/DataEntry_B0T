@@ -63,41 +63,10 @@ class Zeetech:
         ).click()
 
         proj = Project(self.driver, filecount)
+        proj.loopCycle()
 
-        # TODO : INTEGRATE INTO PROJECT CLASS TO BE ABLE TO DO MULTIPLE FILES
-        viewfile = self.driver.find_element(
-            By.XPATH, "//*[@id='div_data_file']/tr[1]/td[2]/a"
-        )
 
-        self.driver.execute_script("arguments[0].click();", viewfile)
 
-        p = Form(self.driver)
-
-        print("Creating A Form")
-
-        p.getPdf()
-        print("Got PDF")
-
-        time.sleep(5)
-
-        print("Reading PDF")
-        p.readPDF()
-        print("Finished Reading PDF")
-
-        print("generating IDs")
-        p.generateIDDict()
-
-        print("generatign payload")
-        p.generatePayload()
-
-        print("\n")
-        print(p.mapped_payload)
-
-        print("Entering Payload")
-        p.enterPayload()
-
-        subm = self.driver.find_element(By.XPATH, '//*[@id="btn_save_bottom"]')
-        self.driver.execute_script("arguments[0].click();", subm)
 
 
 

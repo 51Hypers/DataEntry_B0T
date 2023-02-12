@@ -10,10 +10,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 from src.Consts import *
 from src.Utils import *
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 class Form:
@@ -46,7 +44,6 @@ class Form:
         if os.path.isfile(DWD+"ReadPDFStream.pdf"):
             print("PDF already exists, deleting")
             os.remove(DWD + "ReadPDFStream.pdf")
-
 
         pdflink = self.driver.find_element(By.XPATH, "//object").get_attribute("data")
         (
