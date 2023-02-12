@@ -221,7 +221,85 @@ def main():
     
         set_val=set(values)
         if len(values)-len(set_val)>1:
-            print("error")
+            final_values_dict = {'Application Type': 'New Licence', 'License No.': 'RAN22020119159408', 'Firm Type': 'Proprietary',
+            'Type of Ownership of Business Premises': 'On Rent', 'Applicant Name': 'FAULTY PDF', "Father's Name": 'RAM',
+            'Mobile No.': '9576131033', 'Applicant Address': 'ADRESSS', 'Name of Business': 'BUISNESS',
+            ' Nature of Business/Brief Description of Business': 'SHOP', ' Date of Establishment': '05-01-2019',
+            ' Business Address': 'INDIA', ' Total Area (Sq.Ft.)': '300'}
+            for i in final_labellist:
+                param_id = final_ids_dict[i]
+                param_value = final_values_dict[i]
+                browser.find_element(By.ID, param_id).send_keys(param_value)
+
+    # This exception creater for the total area as the drop down is in the form of options according to given divisions
+                if(i.strip() in "Total Area (Sq.Ft.)"):
+                    param_id = final_ids_dict[i]
+                    param_value = int(final_values_dict[i])
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if(param_value <= 250):
+                        drop_down.select_by_index(0)
+                    elif(param_value > 250 and param_value <= 500):
+                        drop_down.select_by_index(1)
+                    elif(param_value > 500 and param_value <= 750):
+                        drop_down.select_by_index(2)
+                    elif(param_value > 750 and param_value <= 1000):
+                        drop_down.select_by_index(3)
+                    elif(param_value > 1000 and param_value <= 1500):
+                        drop_down.select_by_index(4)
+                    elif(param_value > 1500 and param_value <= 2000):
+                        drop_down.select_by_index(5)
+                    elif(param_value > 2000):
+                        drop_down.select_by_index(6)
+                
+    # This loop is for APPLICATION TYPE having a select tag in the framework
+                if(i.strip() == "Application Type"):
+                    param_id = final_ids_dict[i]
+                    param_value = final_values_dict[i].casefold()
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if("license" in param_value):
+                        drop_down.select_by_index(0)
+                    elif("renew" in param_value):
+                        drop_down.select_by_index(1)
+        
+    # This loop is for the FIRM TYPE having a select tag in the framework
+                if(i.strip() == "Firm Type"):
+                    param_id = final_ids_dict[i]
+                    param_value = final_values_dict[i].casefold()
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if("proprie" in param_value):
+                        drop_down.select_by_index(0)
+                    elif("partner" in param_value):
+                        drop_down.select_by_index(1)
+                    elif("ngo" in param_value):
+                        drop_down.select_by_index(2)
+                    elif("opc" in param_value):
+                        drop_down.select_by_index(3)
+                    elif("private" in param_value):
+                        drop_down.select_by_index(4)
+                    elif("public" in param_value):
+                        drop_down.select_by_index(5)
+                    else:
+                        drop_down.select_by_index(6)
+
+    # This loop is for the TYPE OF OWNERSHIP select tag
+                if(i.strip() == "Type of Ownership of Business Premises"):
+                    param_id = final_ids_dict[i]
+                    param_value = final_values_dict[i].casefold()
+                    drop_down = Select(browser.find_element(By.ID, param_id))
+                    if("rent" in param_value):
+                        drop_down.select_by_index(0)
+                    elif("lease" in param_value):
+                        drop_down.select_by_index(1)
+                    elif("own" in param_value):
+                        drop_down.select_by_index(2)
+
+            submit_button = browser.find_element(By.XPATH, "/html/body/form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[1]/div[41]/div/input")
+            browser.execute_script("arguments[0].click();", submit_button)
+            main()
+            
+    # If no error then it must continue
+        else:
+            continue
         
     # Function to make the addresses unique as the applicant and the buisness address just appear address
         def uniquify(seq, suffs = count(1)):
