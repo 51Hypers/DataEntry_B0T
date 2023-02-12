@@ -22,11 +22,10 @@ import difflib
 from collections import Counter
 from itertools import tee, count
 import tempfile
-import getpass
 
 URL = "https://jobs.zeetechmanagement.com/Candidate/MyProject.aspx"
-LOGINID = input("Enter the Login ID:")
-LOGINPWD = getpass.getpass("Enter the Password:")
+LOGINID = "8861375355"
+LOGINPWD = "wasdrqe156!%^f"
 
 
 def strip_dict(d):
@@ -208,12 +207,10 @@ def main():
             except:
                 continue
         for i in truncated_final_labellist:
-            try:
-                var = difflib.get_close_matches(i, truncated_textarea_ids, 1, 0.7)
-                final_ids_dict.update({final_labellist[truncated_final_labellist.index(i)]: textarea_ids[
-                    truncated_textarea_ids.index(var[0])]})
-            except:
-                continue
+            var = difflib.get_close_matches(i, truncated_textarea_ids, 1, 0.7)
+            final_ids_dict.update({final_labellist[truncated_final_labellist.index(i)]: textarea_ids[
+                truncated_textarea_ids.index(var[0])]})
+
 
         # Loop to correct the final params that are remaining from the above loop
         d = select_ids + input_ids + textarea_ids
