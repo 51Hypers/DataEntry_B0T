@@ -1,6 +1,7 @@
 import difflib
 import os.path
 import re
+from math import ceil
 
 import easyocr
 from pdf2image import convert_from_path
@@ -21,17 +22,17 @@ class Form:
             By.XPATH, '//form/div[4]/div[2]/div/div/div/div[2]/div[2]/div[2]'
         )
 
-        self.pdfpath = ""           # Path to PDF
-        self.pagepath = ""          # Path to Converted Page
+        self.pdfpath = ""  # Path to PDF
+        self.pagepath = ""  # Path to Converted Page
 
         self.form_labels = self.getFormLabels()
         self.input_IDs = self.getInputIDs("input")
         self.select_IDs = self.getInputIDs("select")
         self.textarea_IDs = self.getInputIDs("textarea")
 
-        self.pdf_values = []        # Values from PDF
+        self.pdf_values = []  # Values from PDF
 
-        self.mapped_payload = {}     # Dict mapping PDF Values to Form Labels
+        self.mapped_payload = {}  # Dict mapping PDF Values to Form Labels
         self.mapped_ids = {}
 
     def getPdf(self):
@@ -41,7 +42,7 @@ class Form:
         :return: None
         """
 
-        if os.path.isfile(DWD+"ReadPDFStream.pdf"):
+        if os.path.isfile(DWD + "ReadPDFStream.pdf"):
             print("PDF already exists, deleting")
             os.remove(DWD + "ReadPDFStream.pdf")
 
@@ -81,15 +82,15 @@ class Form:
         res = reader.readtext(self.pagepath, paragraph="False")
 
         self.pdf_values = [i[1] for i in res]
-        Utils.uniquify(self.pdf_values)
-
+        indices = [i for i, x in enumerate(self.pdf_values) if x == "Address"]
         a = ['Applicant', 'Application']
+
         if any(ext in self.pdf_values[0] for ext in a):
-            self.pdf_values = list(map(lambda x: x.replace('Address1', 'Applicant Address'), self.pdf_values))
-            self.pdf_values = list(map(lambda x: x.replace('Address2', 'Business Address'), self.pdf_values))
+            self.pdf_values[indices[0]] = 'Applicant Address'
+            self.pdf_values[indices[1]] = 'Business Address'
         else:
-            self.pdf_values = list(map(lambda x: x.replace('Address2', 'Applicant Address'), self.pdf_values))
-            self.pdf_values = list(map(lambda x: x.replace('Address1', 'Business Address'), self.pdf_values))
+            self.pdf_values[indices[1]] = 'Applicant Address'
+            self.pdf_values[indices[0]] = 'Business Address'
 
         for i in self.pdf_values:
             x = self.pdf_values.index(i)
@@ -146,10 +147,12 @@ class Form:
                     {self.form_labels[cleaned_labels.index(element)]: self.input_IDs[cleanedinput.index(inputvar[0])]}
                 )
                 self.mapped_ids.update(
-                    {self.form_labels[cleaned_labels.index(element)]: self.select_IDs[cleanedselect.index(selectvar[0])]}
+                    {self.form_labels[cleaned_labels.index(element)]: self.select_IDs[
+                        cleanedselect.index(selectvar[0])]}
                 )
                 self.mapped_ids.update(
-                    {self.form_labels[cleaned_labels.index(element)]: self.textarea_IDs[cleanedtextarea.index(textvar[0])]}
+                    {self.form_labels[cleaned_labels.index(element)]: self.textarea_IDs[
+                        cleanedtextarea.index(textvar[0])]}
                 )
             except IndexError:
                 continue
@@ -164,7 +167,7 @@ class Form:
         self.mapped_ids.update({'Name of Business': 'txt_business_name'})
 
     def generatePayload(self):
-        cleaned_labels = Utils.cleanList(self.form_labels,"label")
+        cleaned_labels = Utils.cleanList(self.form_labels, "label")
         cleaned_pdfval = Utils.cleanList(self.pdf_values, "values")
         for element in cleaned_labels:
             var = difflib.get_close_matches(element, Utils.cleanList(self.pdf_values, "values"), 1, 0.7)
@@ -193,8 +196,12 @@ class Form:
                 d = d[:-1]
                 self.mapped_payload.update({i: d})
 
-            if i == 'Mobile No.' and len(d) > 10:
-                d = d[:-1]
+            if i == 'Mobile No.':
+                d = re.sub("[^0-9]", "", d)
+                if len(d) > 10:
+                    d = d[:-1]
+                if len(d) < 10:
+                    d = "1234567890"
                 self.mapped_payload.update({i: d})
 
         for ele in self.form_labels:
@@ -207,7 +214,7 @@ class Form:
             # ! Is Buisness the Right thing
             # TODO : Change to correct spelling later if not right
 
-            if ele.strip() == "Buisness Name":
+            if ele.strip() == "Business Name" or "Bussiness Name" or "":
                 if ele[-1::].isnumeric():
                     self.mapped_payload.update({ele: param_value_check.replace(ele[-1::], "")})
 
@@ -217,7 +224,7 @@ class Form:
 
             # ! Is Buisness the Right thing
 
-            if ele.strip() == "Buisness Address":
+            if ele.strip() == "Business Address":
                 if ele[-1::].isnumeric():
                     self.mapped_payload.update({ele: param_value_check.replace(ele[-1::], "")})
 
@@ -226,83 +233,78 @@ class Form:
             if i.strip() == "Date of Establishment":
                 self.mapped_payload.update({i: self.mapped_payload[i].replace('-', '/')})
 
-    def enterPayload(self):
-        for i in self.form_labels:
-            param_id = self.mapped_ids[i]
-            param_value = self.mapped_payload[i]
-
-            self.driver.find_element(By.ID, param_id).send_keys(param_value)
-
-            if (i.strip() in "Total Area (Sq.Ft.)"):
+    def enterPayload(self, faulty=False):
+        if not faulty:
+            for i in self.form_labels:
                 param_id = self.mapped_ids[i]
-                param_value = int(self.mapped_payload[i])
-                drop_down = Select(self.driver.find_element(By.ID, param_id))
-                if param_value <= 250:
-                    drop_down.select_by_index(0)
-                elif (param_value > 250 and param_value <= 500):
-                    drop_down.select_by_index(1)
-                elif (param_value > 500 and param_value <= 750):
-                    drop_down.select_by_index(2)
-                elif (param_value > 750 and param_value <= 1000):
-                    drop_down.select_by_index(3)
-                elif (param_value > 1000 and param_value <= 1500):
-                    drop_down.select_by_index(4)
-                elif (param_value > 1500 and param_value <= 2000):
-                    drop_down.select_by_index(5)
-                elif (param_value > 2000):
-                    drop_down.select_by_index(6)
+                param_value = self.mapped_payload[i]
 
-            # This loop is for APPLICATION TYPE having a select tag in the framework
-            if i.strip() == "Application Type":
-                param_id = self.mapped_ids[i]
-                param_value = self.mapped_payload[i].casefold()
-                drop_down = Select(self.driver.find_element(By.ID, param_id))
-                if "license" in param_value:
-                    drop_down.select_by_index(0)
-                elif "renew" in param_value:
-                    drop_down.select_by_index(1)
+                self.driver.find_element(By.ID, param_id).send_keys(param_value)
 
-            # This loop is for the FIRM TYPE having a select tag in the framework
-            if i.strip() == "Firm Type":
-                param_id = self.mapped_ids[i]
-                param_value = self.mapped_payload[i].casefold()
-                drop_down = Select(self.driver.find_element(By.ID, param_id))
-                if "proprie" in param_value:
-                    drop_down.select_by_index(0)
-                elif "partner" in param_value:
-                    drop_down.select_by_index(1)
-                elif "ngo" in param_value:
-                    drop_down.select_by_index(2)
-                elif "opc" in param_value:
-                    drop_down.select_by_index(3)
-                elif "private" in param_value:
-                    drop_down.select_by_index(4)
-                elif "public" in param_value:
-                    drop_down.select_by_index(5)
-                else:
-                    drop_down.select_by_index(6)
+                if (i.strip() in "Total Area (Sq.Ft.)"):
+                    param_id = self.mapped_ids[i]
+                    param_value = int(ceil(float(self.mapped_payload[i])))
+                    drop_down = Select(self.driver.find_element(By.ID, param_id))
+                    if param_value <= 250:
+                        drop_down.select_by_index(0)
+                    elif (param_value > 250 and param_value <= 500):
+                        drop_down.select_by_index(1)
+                    elif (param_value > 500 and param_value <= 750):
+                        drop_down.select_by_index(2)
+                    elif (param_value > 750 and param_value <= 1000):
+                        drop_down.select_by_index(3)
+                    elif (param_value > 1000 and param_value <= 1500):
+                        drop_down.select_by_index(4)
+                    elif (param_value > 1500 and param_value <= 2000):
+                        drop_down.select_by_index(5)
+                    elif (param_value > 2000):
+                        drop_down.select_by_index(6)
 
-            # This loop is for the TYPE OF OWNERSHIP select tag
-            if i.strip() == "Type of Ownership of Business Premises":
-                param_id = self.mapped_ids[i]
-                param_value = self.mapped_payload[i].casefold()
-                drop_down = Select(self.driver.find_element(By.ID, param_id))
-                if "rent" in param_value:
-                    drop_down.select_by_index(0)
-                elif "lease" in param_value:
-                    drop_down.select_by_index(1)
-                elif "own" in param_value:
-                    drop_down.select_by_index(2)
+                # This loop is for APPLICATION TYPE having a select tag in the framework
+                if i.strip() == "Application Type":
+                    param_id = self.mapped_ids[i]
+                    param_value = self.mapped_payload[i].casefold()
+                    drop_down = Select(self.driver.find_element(By.ID, param_id))
+                    if "license" in param_value:
+                        drop_down.select_by_index(0)
+                    elif "renew" in param_value:
+                        drop_down.select_by_index(1)
 
-            # This loop is there to data that is there in the data txt area so that it can be re-entered as payload
-            if i.strip() == "Date of Establishment":
-                date_button = self.driver.find_element(By.ID, param_id)
-                for _ in range(20):
-                    date_button.send_keys(Keys.BACKSPACE)
-                date_button.send_keys(param_id, param_value)
+                # This loop is for the FIRM TYPE having a select tag in the framework
+                if i.strip() == "Firm Type":
+                    param_id = self.mapped_ids[i]
+                    param_value = self.mapped_payload[i].casefold()
+                    drop_down = Select(self.driver.find_element(By.ID, param_id))
+                    if "proprie" in param_value:
+                        drop_down.select_by_index(0)
+                    elif "partner" in param_value:
+                        drop_down.select_by_index(1)
+                    elif "ngo" in param_value:
+                        drop_down.select_by_index(2)
+                    elif "opc" in param_value:
+                        drop_down.select_by_index(3)
+                    elif "private" in param_value:
+                        drop_down.select_by_index(4)
+                    elif "public" in param_value:
+                        drop_down.select_by_index(5)
+                    else:
+                        drop_down.select_by_index(6)
 
+                # This loop is for the TYPE OF OWNERSHIP select tag
+                if i.strip() == "Type of Ownership of Business Premises":
+                    param_id = self.mapped_ids[i]
+                    param_value = self.mapped_payload[i].casefold()
+                    drop_down = Select(self.driver.find_element(By.ID, param_id))
+                    if "rent" in param_value:
+                        drop_down.select_by_index(0)
+                    elif "lease" in param_value:
+                        drop_down.select_by_index(1)
+                    elif "own" in param_value:
+                        drop_down.select_by_index(2)
 
-
-
-
-
+                # This loop is there to data that is there in the data txt area so that it can be re-entered as payload
+                if i.strip() == "Date of Establishment":
+                    date_button = self.driver.find_element(By.ID, param_id)
+                    for _ in range(20):
+                        date_button.send_keys(Keys.BACKSPACE)
+                    date_button.send_keys(param_id, param_value)

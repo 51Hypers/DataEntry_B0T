@@ -1,7 +1,7 @@
 import time
 
 from src.Form import *
-
+from selenium.webdriver.common.alert import Alert
 
 class Project:
     def __init__(self,driver: webdriver.Chrome, filecount: int):
@@ -59,16 +59,16 @@ class Project:
 
     def loopCycle(self):
         try:
-            while self.state:
-                for _ in range(20):
-                    self.executeCycle()
-                    time.sleep(10)
+            for _ in range(20):
+                self.executeCycle()
+                time.sleep(10)
 
-                self.cycles +=1
-                self.cycle_filecount = 0
-                self.state = False
+            self.cycles +=1
+            self.cycle_filecount = 0
+            self.state = False
             print(f"Cycles : {self.cycles}")
         except:
+            self.state = False
             self.regenerateData()
 
     def regenerateData(self):
@@ -78,9 +78,16 @@ class Project:
                 By.XPATH, '//*[@id="btn_get_data"]'
             )
             self.driver.execute_script("arguments[0].click();", b)
+            print("Accepting Alert")
+            Alert(self.driver).accept()
+
 
         self.state = True
+        print("Data regenerated")
+        print("Looping cycle")
+
         self.loopCycle()
+
 
 
 
