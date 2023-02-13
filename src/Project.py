@@ -1,15 +1,5 @@
-import os
-import re
-
 import time
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-
-from src.Consts import *
 from src.Form import *
 
 

@@ -1,17 +1,9 @@
 #  Imports
-import time
 
-from selenium import webdriver
 from selenium.webdriver.common.alert import Alert
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.keys import Keys
-from src.Consts import *
-from webdriver_manager.chrome import ChromeDriverManager
-from src.Project import *
-from src.Utils import *
+
 from src.Form import *
+from src.Project import *
 
 
 class Zeetech:
@@ -19,7 +11,7 @@ class Zeetech:
         print("Init started")
         self.driver = Utils.get_driver()
         self.driver.get(URL)
-        self.driver.implicitly_wait(5)
+        self.driver.implicitly_wait(15)
 
         self._currentpage = "Login"
 
@@ -44,7 +36,7 @@ class Zeetech:
         print("Logged in")
         self._currentpage = "DailyAttendance"
 
-    def start_project(self):
+    def navigatetoProj(self):
         # * Click MyProjects Button
         try:
             (
