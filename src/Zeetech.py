@@ -4,7 +4,7 @@ from selenium.webdriver.common.alert import Alert
 
 from src.Form import *
 from src.Project import *
-
+import logging
 
 class Zeetech:
     def __init__(self):
@@ -24,16 +24,19 @@ class Zeetech:
 
         self.driver.find_element(By.ID, "txt_user").send_keys(loginid)
         print("Entered login id")
+        logging.info("Entered login id")
 
         # Login PWD
         self.driver.find_element(By.ID, "txt_pass").send_keys(loginpwd)
         print("Entered login password")
+        logging.info("Entered login Pwd")
 
         # Accept Cookies
         self.driver.find_element(By.ID, "chk_accept_cookie_policy").click()
         self.driver.find_element(By.ID, "btn_log").click()
 
         print("Logged in")
+        logging.info("Successfully Logged in")
         self._currentpage = "DailyAttendance"
 
     def navigatetoProj(self):
