@@ -1,4 +1,5 @@
 import time
+import random
 
 from src.Form import *
 from selenium.webdriver.common.alert import Alert
@@ -53,6 +54,8 @@ class Project:
     def executeCycle(self):
         self.openFile()
         self.realizeFile()
+        pause = random.randint(12,19)
+        time.sleep(pause)
         self.submitFile()
         self.cycle_filecount +=1
         print(f"Cycle Files done : {self.cycle_filecount}")
@@ -61,7 +64,7 @@ class Project:
         try:
             for _ in range(20):
                 self.executeCycle()
-                time.sleep(10)
+                time.sleep(3)
 
             self.cycles +=1
             self.cycle_filecount = 0
@@ -87,15 +90,3 @@ class Project:
         print("Looping cycle")
 
         self.loopCycle()
-
-
-
-
-
-
-
-
-
-
-
-
