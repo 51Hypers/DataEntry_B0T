@@ -37,37 +37,32 @@ class Zeetech:
         self._currentpage = "DailyAttendance"
 
     def navigatetoProj(self):
-        # * Click View File
-        Viewfilebutton = self.driver.find_element(By.XPATH, '//*[@id="grdv_project_link_view_file_0"]')
-
-        self.driver.execute_script("arguments[0].click();",Viewfilebutton)
-
-    #     # * Click MyProjects Button
-    #     try:
-    #         (
-    #             self.driver
-    #             .execute_script(
-    #                 "arguments[0].click();",
-    #                 self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
-    #             )
-    #         )
-    #         self._currentpage = "MyProject"
-    #     except:
-    #         attendance_button = self.driver.find_element(
-    #             By.XPATH,
-    #             "/html/body/form/div[4]/div[2]/div/div[2]/div/div[1]/div/div[1]/input"
-    #         )
-    #         self.driver.execute_script("arguments[0].click();", attendance_button)
-    #         alert = Alert(self.driver)
-    #         alert.accept()
-    #         (
-    #             self.driver
-    #             .execute_script(
-    #                 "arguments[0].click();",
-    #                 self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
-    #             )
-    #         )
-    #         self._currentpage = "MyProject"
+        # * Click MyProjects Button
+        try:
+            (
+                self.driver
+                .execute_script(
+                    "arguments[0].click();",
+                    self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
+                )
+            )
+            self._currentpage = "MyProject"
+        except:
+            attendance_button = self.driver.find_element(
+                By.XPATH,
+                "/html/body/form/div[4]/div[2]/div/div[2]/div/div[1]/div/div[1]/input"
+            )
+            self.driver.execute_script("arguments[0].click();", attendance_button)
+            alert = Alert(self.driver)
+            alert.accept()
+            (
+                self.driver
+                .execute_script(
+                    "arguments[0].click();",
+                    self.driver.find_element(By.XPATH, "//a[@href='MyProject.aspx']")
+                )
+            )
+            self._currentpage = "MyProject"
 
     def startProject(self):
         filecount = int(self.driver.find_element(
@@ -75,14 +70,8 @@ class Zeetech:
         ).get_attribute("innerHTML"))
 
         self.driver.find_element(
-            By.XPATH, "//div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[8]/a[1]"
+            By.XPATH, "/html/body/form/div[4]/div[2]/div/div[2]/div/div/div[2]/div/div/table/tbody/tr/td[8]/a[1]"
         ).click()
 
         proj = Project(self.driver, filecount)
         proj.loopCycle()
-
-
-
-
-
-
