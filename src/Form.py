@@ -1,6 +1,7 @@
 import difflib
 import os.path
 import re
+import sys
 from math import ceil
 
 import easyocr
@@ -233,8 +234,8 @@ class Form:
             if i.strip() == "Date of Establishment":
                 self.mapped_payload.update({i: self.mapped_payload[i].replace('-', '/')})
 
-    def enterPayload(self, faulty=False):
-        if not faulty:
+    def enterPayload(self):
+        try:
             for i in self.form_labels:
                 param_id = self.mapped_ids[i]
                 param_value = self.mapped_payload[i]
@@ -308,3 +309,6 @@ class Form:
                     for _ in range(20):
                         date_button.send_keys(Keys.BACKSPACE)
                     date_button.send_keys(param_id, param_value)
+        except :
+            print("ENTERING FAULTY VALS PDF")
+            # TODO: FILL IN FAULTY PDF

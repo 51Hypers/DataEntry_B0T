@@ -1,5 +1,8 @@
 from src.Zeetech import *
-
+from src.testPDF import *
+from src.Consts import *
+def testpdf():
+    readPDF(DWD + "ReadPDFStream.pdf")
 
 def main():
     z = Zeetech()
@@ -8,5 +11,7 @@ def main():
     z.startProject()
 
 
-if __name__ == '__main__':
-    main()
+testpdf()
+#
+# if __name__ == '__main__':
+#     main()
