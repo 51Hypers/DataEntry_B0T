@@ -45,6 +45,8 @@ class Project:
 
         print("Entering Payload")
         p.enterPayload()
+        print("validating")
+        p.validateForm()
 
     def submitFile(self):
         subm = self.driver.find_element(By.XPATH, '//*[@id="btn_save_bottom"]')

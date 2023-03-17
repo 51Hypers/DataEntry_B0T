@@ -328,3 +328,10 @@ class Form:
             self.driver.find_element(By.XPATH,'//*[@id="txt_business_address"]').send_keys("FaultyPDF")
             drop_down_faulty4 = Select(self.driver.find_element(By.XPATH,'//*[@id="dl_total_area"]'))
             drop_down_faulty4.select_by_index(0)
+
+    def validateForm(self):
+        for i in IDs_dict:
+            if (self.driver.find_element(By.XPATH, i).get_attribute("value")) is None:
+                self.faulty_pdf()
+            else:
+                continue
